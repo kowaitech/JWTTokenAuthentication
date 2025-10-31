@@ -1,86 +1,14 @@
-// const express = require('express');
-// const jwt=require('jsonwebtoken');
-// const  bcrypt=require('bcryptjs');
-// const cors=require('cors');
-
-// const app=express();
-// const port=6100;
-
-// app.use(express.json());
-// app.use(cors());
-
-
-// const usersofdata = []; 
-
-// const secretKey = 'yu';
-
-// app.get('/',(res,req)=>{
-//   res.send('Hello I am from Server')
-// }
-// )
-
-
-// const { MongoClient, ServerApiVersion } = require('mongodb');
-// const uri = "mongodb+srv://kowsalyaaitech:123abc@cluster0.ufoxayc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
-// const client = new MongoClient(uri, {
-//   serverApi: {
-//     version: ServerApiVersion.v1,
-//     strict: true,
-//     deprecationErrors: true,
-//   }
-// });
-
-// async function run() {
-//   try {
-//     await client.connect();
-
-//     await client.db("admin").command({ ping: 1 });
-//     console.log("Pinged your deployment. You successfully connected to MongoDB!");
-//   } finally {
-//     await client.close();
-//   }
-// }
-// run().catch(console.dir);
-
-// app.post('/register',async(req,res)=>{
-//     const {username,password}=req.body;
-//     const hashedPassword= await bcrypt.hash(password,10);
-//     usersofdata.push({username,password:hashedPassword});
-//     res.sendStatus(201);
-//     console.log("User registered Successfully")
-// })
-
-// app.post('/login',async(req,res)=>{
-//     const {username,password}=req.body;
-//     const user=usersofdata.find((us)=>us.username===username)
-//     if(user){
-//        const isValiduser=await bcrypt.compare(password,user.password,);
-//        if(isValiduser){
-//             const token=await jwt.sign({username},secretKey,{expiresIn:'1hr'})
-//             res.json({ token });
-//             console.log("login Successfully");
-//        }else{
-//             res.status(401).json({message:'Invalid Credential,since Password Does not match'})
-//        }
-
-//     }else{
-//       res.status(401).json({message:'Invalid Credential,since User Not Found,SignUp to Login plz'})
-//     }
-// })
-
-// app.listen(port,()=>{
-//   console.log("Running on Port",port)
-// })
-
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const cors = require('cors');
+const dotenv=require("dotenv")
+dotenv.config()
 const { OAuth2Client } = require("google-auth-library");
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
 
-const Oauthclient = new OAuth2Client("276916434451-gs4pi3694fvrm1jere57s41k72f12ti0.apps.googleusercontent.com");
+const Oauthclient = new OAuth2Client(process.env.CLIENT_ID);
 
 const app = express();
 const port = 6100;
@@ -167,7 +95,7 @@ app.post("/google-login", async (req, res) => {
     const { token } = req.body;
     const ticket = await Oauthclient.verifyIdToken({
       idToken: token,
-      audience: "276916434451-gs4pi3694fvrm1jere57s41k72f12ti0.apps.googleusercontent.com",
+      audience:process.env.CLIENT_ID,
     });
 
     const payload = ticket.getPayload();

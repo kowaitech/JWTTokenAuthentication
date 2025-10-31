@@ -27,7 +27,13 @@
 // }
 
 import axios from 'axios';
-const API_URL = 'http://localhost:6100/';
+
+const API_URL = "http://localhost:6100/";
+
+
+export const handleGoogleError = () => {
+  alert("Google Login Failed!");
+};
 
 export const register = async (username, password) => {
   try {

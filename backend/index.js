@@ -76,7 +76,11 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const cors = require('cors');
+const { OAuth2Client } = require("google-auth-library");
+
 const { MongoClient, ServerApiVersion } = require('mongodb');
+
+const Oauthclient = new OAuth2Client("276916434451-gs4pi3694fvrm1jere57s41k72f12ti0.apps.googleusercontent.com");
 
 const app = express();
 const port = 6100;
@@ -158,6 +162,38 @@ async function connectDB() {
         });
 });
 
+app.post("/google-login", async (req, res) => {
+  try {
+    const { token } = req.body;
+    const ticket = await Oauthclient.verifyIdToken({
+      idToken: token,
+      audience: "276916434451-gs4pi3694fvrm1jere57s41k72f12ti0.apps.googleusercontent.com",
+    });
+
+    const payload = ticket.getPayload();
+    const username = payload?.email; // use email as username
+    const name = payload?.name;
+    const picture = payload?.picture;
+
+    // Check if user exists
+    let user = await usersCollection.findOne({ username });
+
+    if (!user) {
+      // If user doesn't exist, create a new one
+      const newUser = { username, password: null, name, picture, fromGoogle: true };
+      await usersCollection.insertOne(newUser);
+      console.log("New Google user created:", username);
+    }
+
+    // Create your own JWT (so your app uses one token type)
+    const myToken = jwt.sign({ username:name }, secretKey, { expiresIn: "1h" });
+
+    res.json({ token: myToken });
+  } catch (err) {
+    console.error("Google Login Error:", err);
+    res.status(400).json({ message: "Invalid Google token" });
+  }
+});
 
     console.log("Connected to MongoDB and 'users' collection ready.");
   } catch (err) {

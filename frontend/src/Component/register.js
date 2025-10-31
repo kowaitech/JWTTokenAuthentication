@@ -1,59 +1,75 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { register } from './auth';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
+import './Register.css'; 
+
 const Register = () => {
+  const [username, setusername] = useState('');
+  const [password, setpassword] = useState('');
+  const [error, seterror] = useState('');
+  const [success, setsuccess] = useState('');
+  const navigate = useNavigate();
 
-    const [username,setusername]=useState('');
-    const [password,setpassword]=useState('');
-    const [error,seterror]=useState('');
-    const [success,setsucess]=useState('')
-    const navigate=useNavigate();
-
-    const handleSubmit=async(e)=>{
-         e.preventDefault();
-         try{
-            await register(username,password);
-            setsucess('Registered Succuseffly');
-            seterror('');
-            navigate("/login");
-         }catch(err){
-            console.log("Registration Error",err);
-            seterror("Registration Failed");
-            setsucess('');
-         }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await register(username, password);
+      setsuccess('Registered Successfully');
+      seterror('');
+      navigate('/login');
+    } catch (err) {
+      console.log('Registration Error', err);
+      seterror('Registration Failed');
+      setsuccess('');
     }
+  };
 
-    return (
-        <>
-        <Helmet>
-            <title>Registration</title>
-        </Helmet>
-            <form onSubmit={handleSubmit}>
-                <label>UserName</label>
-                <input 
-                    type='text'
-                    name='name' 
-                    value={username}
-                    onChange={(e)=>setusername(e.target.value)}/>
+  return (
+    <>
+      <Helmet>
+        <title>Register</title>
+      </Helmet>
 
-            <br></br><br></br>
+      <div className="register-container">
+        <div className="register-card">
+          <h2>Create Account 📝</h2>
+          <p className="subtitle">Register a new account</p>
+
+          <form onSubmit={handleSubmit}>
+            <label>Username</label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setusername(e.target.value)}
+              placeholder="Enter your username"
+              required
+            />
 
             <label>Password</label>
-                <input 
-                    type='password'
-                    name='password' 
-                    value={password}
-                    onChange={(e)=>setpassword(e.target.value)}/>
-        <br></br><br></br>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setpassword(e.target.value)}
+              placeholder="Enter your password"
+              required
+            />
 
-        <button type='submit'>Register</button>
-        {success && <p style={{color:"Green"}}>{success}</p>}
-        {error && <p style={{color:'red'}}>{error}</p>}
-            </form>
-            </>
-    )
-}
+            <button type="submit">Register</button>
 
-export default Register
+            {success && <p className="success">{success}</p>}
+            {error && <p className="error">{error}</p>}
+          </form>
+
+          <p className="login-text">
+            Already have an account? <Link to="/login">Login</Link>
+          </p>
+
+          {/* <Link to="/" className="home-link">← Back to Home</Link> */}
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default Register;

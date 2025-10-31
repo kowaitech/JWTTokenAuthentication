@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { verifyToken } from './auth';
 
 const ProtectedRoute = ({ children }) => {
+    
   const [isValid, setIsValid] = useState(null);
 
   useEffect(() => {

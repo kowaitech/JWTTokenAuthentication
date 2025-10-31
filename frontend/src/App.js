@@ -9,7 +9,7 @@ import ProtectedRoute from './Component/ProtectedRoute';
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
 function App() {
-const clientId = "276916434451-gs4pi3694fvrm1jere57s41k72f12ti0.apps.googleusercontent.com";
+const clientId = process.env.CLIENT_ID;
 
   // const [sum,setsum]=useState(0)
 
